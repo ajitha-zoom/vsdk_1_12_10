@@ -4,6 +4,7 @@ import { useState, useContext, useMemo } from 'react';
 import ZoomVideo from '@zoom/videosdk';
 import ZoomContext from '../../../context/zoom-context';
 import './report-btn.scss';
+// eslint-disable-next-line no-restricted-globals
 const trackingId = Object.fromEntries(new URLSearchParams(location.search))?.customerJoinId;
 const { Item: ListItem } = List;
 const ReportBtn = () => {
@@ -67,6 +68,7 @@ const ReportBtn = () => {
     });
   };
   // @ts-ignore
+  // eslint-disable-next-line no-restricted-globals
   let meetingArgs: any = Object.fromEntries(new URLSearchParams(location.search));
   return (
     <>

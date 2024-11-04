@@ -12,6 +12,7 @@ interface AvatarMoreProps {
   userId: number;
   isHover: boolean;
 }
+// eslint-disable-next-line no-restricted-globals
 const isUseVideoPlayer = new URLSearchParams(location.search).get('useVideoPlayer') === '1';
 const AvatarMore = (props: AvatarMoreProps) => {
   const { userId, isHover } = props;

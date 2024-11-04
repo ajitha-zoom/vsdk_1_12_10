@@ -13,7 +13,9 @@ interface VideoMaskModelProps {
   setVisible: (visible: boolean) => void;
 }
 const maskBackgroundList = [
+  // eslint-disable-next-line no-restricted-globals
   { key: 'blur', url: `${location.origin}/blur.png` },
+  // eslint-disable-next-line no-restricted-globals
   { key: 'moon', url: `${location.origin}/moon.jpg` }
 ];
 export const VideoMaskModel = (props: VideoMaskModelProps) => {

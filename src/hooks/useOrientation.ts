@@ -4,6 +4,7 @@ export function useOrientation() {
   const isScreenOrientation = 'orientation' in window.screen;
   const onChange = useCallback(() => {
     if (isScreenOrientation) {
+      // eslint-disable-next-line no-restricted-globals
       setOrientation(screen.orientation.type.split('-')?.[0]);
     } else if ('matchMedia' in window) {
       const isLandscape = !!(window as any).matchMedia('(orientation: landscape)')?.matches;
