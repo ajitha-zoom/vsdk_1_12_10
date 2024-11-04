@@ -13,7 +13,7 @@ let meetingArgs: any = Object.fromEntries(new URLSearchParams(location.search));
 // Add enforceGalleryView to turn on the gallery view without SharedAddayBuffer
 if (!meetingArgs.sdkKey || !meetingArgs.topic || !meetingArgs.name || !meetingArgs.signature) {
   meetingArgs = { ...devConfig, ...meetingArgs };
-  meetingArgs.enforceGalleryView = true;
+  meetingArgs.enforceGalleryView = !window?.crossOriginIsolated;
 }
 
 if (meetingArgs.web && meetingArgs.web !== '0') {
@@ -52,25 +52,22 @@ if (meetingArgs?.telemetry_tracking_id) {
   meetingArgs.telemetry_tracking_id = '';
 }
 
-/*if (!meetingArgs.signature && meetingArgs.sdkSecret && meetingArgs.topic) {
+/* if (!meetingArgs.signature && meetingArgs.sdkSecret && meetingArgs.topic) {
   meetingArgs.signature = generateVideoToken(
     meetingArgs.sdkKey,
     meetingArgs.sdkSecret,
     meetingArgs.topic,
+    meetingArgs.password,
     meetingArgs.sessionKey,
     meetingArgs.userIdentity,
     Number(meetingArgs.role ?? 1),
     meetingArgs.cloud_recording_option,
     meetingArgs.cloud_recording_election,
     meetingArgs.telemetry_tracking_id
-  );
-  console.log('=====================================');
-  console.log('meetingArgs', meetingArgs);
-  }*/
-
+  );*/
 let namefromPrompt = null;
 let sessionName = null;
-let passcode = null;
+let password = null;
 
 while (namefromPrompt == null || namefromPrompt == '') {
   namefromPrompt = prompt('Enter your name', '');
@@ -85,24 +82,25 @@ console.log(sessionName);
 meetingArgs.sessionKey = sessionName;
 meetingArgs.topic = sessionName;
 
-while (passcode == null || passcode == '') {
-  passcode = prompt('Enter passcode', '');
+while (password == null || password == '') {
+  password = prompt('Enter password', '');
 }
-meetingArgs.passcode = passcode;
-
-fetch('https://zlab.zoom.us/vsdk-auth', {
+meetingArgs.password = password;
+//fetch('https://or116ttpz8.execute-api.us-west-1.amazonaws.com/default/videosdk', {
+fetch('https://bgctn3ueuc.execute-api.us-east-1.amazonaws.com/testing', {
   //fetch(`/api/`, {
   method: 'POST',
   headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json'
-  },
+            'Content-Type':'application/json',
+            'Accept':'application/json'
+        },
   body: JSON.stringify({
     sessionName: meetingArgs.topic,
     role: meetingArgs.role,
-    userIdentity: meetingArgs.userIdentity,
+    userIdentity: meetingArgs.name,
     sessionKey: meetingArgs.sessionKey,
     geoRegions: 'US,AU,CA,IN,CN,BR,MX,HK,SG,JP,DE,NL',
+    pwd: meetingArgs.password,
     cloudRecordingOption: 1,
     cloudRecordingElection: 0
   })
@@ -115,22 +113,22 @@ fetch('https://zlab.zoom.us/vsdk-auth', {
     console.log(data.signature);
     meetingArgs.signature = data.signature;
     const zmClient = ZoomVideo.createClient();
+const root = createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  <React.StrictMode>
+    <ZoomContext.Provider value={zmClient}>
+      <App meetingArgs={meetingArgs as any} />
+    </ZoomContext.Provider>
+  </React.StrictMode>
+);
 
-    ReactDOM.render(
-      <React.StrictMode>
-        <ZoomContext.Provider value={zmClient}>
-          <App meetingArgs={meetingArgs as any} />
-        </ZoomContext.Provider>
-      </React.StrictMode>,
-      document.getElementById('root')
-    );
   })
   .catch((error) => {
     console.log(error);
   });
 
-console.log('=====================================');
-console.log('meetingArgs', meetingArgs);
+  console.log('=====================================');
+  console.log('meetingArgs', meetingArgs);
 
   const urlArgs: any = {
     topic: meetingArgs.topic,
@@ -148,16 +146,7 @@ console.log('meetingArgs', meetingArgs);
   };
   console.log('use url args');
   console.log(window.location.origin + '/?' + new URLSearchParams(urlArgs).toString());
-}
-const zmClient = ZoomVideo.createClient();
-const root = createRoot(document.getElementById('root') as HTMLElement);
-root.render(
-  <React.StrictMode>
-    <ZoomContext.Provider value={zmClient}>
-      <App meetingArgs={meetingArgs as any} />
-    </ZoomContext.Provider>
-  </React.StrictMode>
-);
+
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
